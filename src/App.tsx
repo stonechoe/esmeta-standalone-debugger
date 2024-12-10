@@ -16,6 +16,8 @@ import { AppState } from "./store/reducers/AppState";
 import { updateAlgoListRequest } from "./store/reducers/Spec";
 
 
+import WorkerTest from "./worker/WorkerTest";
+
 const theme = createTheme();
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -53,7 +55,8 @@ class App extends React.Component<AppProps> {
         <ToastContainer autoClose={3000} hideProgressBar={true} />
         <Grid container className="app-container">
           <Grid item xs={12}>
-            <Toolbar />
+              <Toolbar />
+              <WorkerTest />
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2} style={{ width: "100%" }}>
