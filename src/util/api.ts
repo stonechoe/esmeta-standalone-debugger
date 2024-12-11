@@ -1,4 +1,5 @@
 import { toast } from "react-toastify";
+import { Route } from "./route.type";
 
 // Create worker instance
 const worker = new Worker(new URL('./api.worker.ts', import.meta.url));
@@ -7,7 +8,7 @@ const worker = new Worker(new URL('./api.worker.ts', import.meta.url));
 const ta = new Uint8Array(new SharedArrayBuffer(1));
 
 // Helper function to handle worker communication
-const createWorkerRequest = (type: string, endpoint: string, data?: unknown): Promise<unknown> => {
+const createWorkerRequest = (type: string, endpoint: Route, data?: unknown): Promise<unknown> => {
   return new Promise((resolve, reject) => {
     const id = Atomics.add(ta, 0, 1);
     
@@ -32,28 +33,28 @@ const createWorkerRequest = (type: string, endpoint: string, data?: unknown): Pr
 
 // Modified API request functions
 export const doAPIGetRequest = (
-  endpoint: string,
+  endpoint: Route,
   queryObj?: { [key: string]: unknown }
 ): Promise<unknown> => {
   return createWorkerRequest('GET', endpoint, queryObj);
 };
 
 export const doAPIPostRequest = (
-  endpoint: string,
+  endpoint: Route,
   bodyObj?: unknown
 ): Promise<unknown> => {
   return createWorkerRequest('POST', endpoint, bodyObj);
 };
 
 export const doAPIDeleteRequest = (
-  endpoint: string,
+  endpoint: Route,
   bodyObj?: unknown
 ): Promise<unknown> => {
   return createWorkerRequest('DELETE', endpoint, bodyObj);
 };
 
 export const doAPIPutRequest = (
-  endpoint: string,
+  endpoint: Route,
   bodyObj?: unknown
 ): Promise<unknown> => {
   return createWorkerRequest('PUT', endpoint, bodyObj);

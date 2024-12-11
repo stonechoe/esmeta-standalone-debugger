@@ -16,7 +16,6 @@ import { AppState } from "./store/reducers/AppState";
 import { updateAlgoListRequest } from "./store/reducers/Spec";
 
 
-import WorkerTest from "./worker/WorkerTest";
 
 const theme = createTheme();
 
@@ -56,7 +55,6 @@ class App extends React.Component<AppProps> {
         <Grid container className="app-container">
           <Grid item xs={12}>
               <Toolbar />
-              <WorkerTest />
           </Grid>
           <Grid item xs={12}>
             <Grid container spacing={2} style={{ width: "100%" }}>
