@@ -6,57 +6,55 @@ import type { Mocking } from './esmeta.type';
 //////////////////////// import from Scala.js /////////////////////////
 
 let ESMetaDebugger: Promise<Mocking> = (async () => {
-  const module = await import('./api-scala/main.mjs');
-  return module.ESMetaSpec.build("");
+  const module = await import('../../scalajs/target/scala-3.3.3/esmeta-worker-opt/main.mjs');
+  return (await (await module.ESMetaSpec).build(""));
 })();
 
 ////////////////////////////////////////////////////////////////////////
 
-const API_HOST = "http://localhost:8080";
-
 
 // json header
-const mkJSONHeader = (): Record<string, string> => {
-  const headers: { [index: string]: string } = {};
-  headers["Content-Type"] = "application/json";
-  headers["Accept"] = "application/json";
-  return headers;
-};
+// const mkJSONHeader = (): Record<string, string> => {
+//   const headers: { [index: string]: string } = {};
+//   headers["Content-Type"] = "application/json";
+//   headers["Accept"] = "application/json";
+//   return headers;
+// };
 
 // trim slash
-const trim_slash = (input: string): string => {
-  return input.replace(/\/+$/, "").replace(/^\/+/, "");
-};
+// const trim_slash = (input: string): string => {
+//   return input.replace(/\/+$/, "").replace(/^\/+/, "");
+// };
 
 // make url for GET request
-const mkURL = (
-  host: string,
-  endpoint: string,
-  queryObj: { [key: string]: unknown } = {},
-): string => {
-  let url = `${trim_slash(host)}/${trim_slash(endpoint)}`;
-  const listParams: string[] = [];
-  for (const key in queryObj) {
-    const entry = queryObj[key];
-    if (
-      typeof entry === "string" ||
-      typeof entry === "number" ||
-      typeof entry === "boolean"
-    ) {
-      const param = `${encodeURIComponent(key)}=${encodeURIComponent(
-        entry.toString(),
-      )}`;
-      listParams.push(param);
-    } else if (entry !== undefined || entry !== null) {
-      throw new Error(`Not supported entry type: ${typeof entry}(${entry})`);
-    }
-  }
-  if (listParams.length > 0) {
-    const querystring = listParams.join("&");
-    url += `?${querystring}`;
-  }
-  return url;
-};
+// const mkURL = (
+//   host: string,
+//   endpoint: string,
+//   queryObj: { [key: string]: unknown } = {},
+// ): string => {
+//   let url = `${trim_slash(host)}/${trim_slash(endpoint)}`;
+//   const listParams: string[] = [];
+//   for (const key in queryObj) {
+//     const entry = queryObj[key];
+//     if (
+//       typeof entry === "string" ||
+//       typeof entry === "number" ||
+//       typeof entry === "boolean"
+//     ) {
+//       const param = `${encodeURIComponent(key)}=${encodeURIComponent(
+//         entry.toString(),
+//       )}`;
+//       listParams.push(param);
+//     } else if (entry !== undefined || entry !== null) {
+//       throw new Error(`Not supported entry type: ${typeof entry}(${entry})`);
+//     }
+//   }
+//   if (listParams.length > 0) {
+//     const querystring = listParams.join("&");
+//     url += `?${querystring}`;
+//   }
+//   return url;
+// };
 
 const apiError =(s : String) => new Error(`Unknown API endpoint ${s}`);
 
@@ -72,7 +70,6 @@ type HTTPMethod =
 
 // raw GET request
 const doGetRequest = async (
-  host: string,
   endpoint: Route,
   queryObj?: { [key: string]: unknown },
 ): Promise<unknown> => {
@@ -108,7 +105,6 @@ import { Route } from './route.type';
 
 // raw POST-like request
 const doWriteRequest = async (
-  host: string,
   method: HTTPMethod,
   endpoint: Route,
   bodyObj?: string,
@@ -199,11 +195,11 @@ self.onmessage = async (e: MessageEvent<ApiMessageData<any>>) => {
     switch (type) {
       case 'GET':
         // @ts-expect-error TODO type definition
-        result = await doGetRequest(API_HOST, endpoint, data);
+        result = await doGetRequest( endpoint, data);
         break;
       case 'POST': case 'PUT': case 'DELETE':
         // @ts-expect-error TODO type definition
-        result = await doWriteRequest(API_HOST, type, endpoint, data);
+        result = await doWriteRequest(type, endpoint, data);
         break;
       default:
         throw new Error(`Unsupported request type: ${type}`);
